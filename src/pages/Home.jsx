@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { supabase } from '../supabase';
 import FloatingDoodles from '../components/FloatingDoodles';
 import './Home.css';
+
+const DOODLES_BUCKET = 'doodles';
 
 function Home() {
   const drawCanvasRef = useRef(null);
@@ -8,22 +11,39 @@ function Home() {
   const [currentColor, setCurrentColor] = useState('#667eea');
   const [brushSize, setBrushSize] = useState(3);
   const [isEraser, setIsEraser] = useState(false);
+  const [doodles, setDoodles] = useState([]);
+  const [isPostingDoodle, setIsPostingDoodle] = useState(false);
 
   useEffect(() => {
     const canvas = drawCanvasRef.current;
     const ctx = canvas.getContext('2d');
-    
-    // Set canvas size
+
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-    
-    // Set initial canvas background
+
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
+
+    fetchDoodles();
   }, []);
+
+  const fetchDoodles = async () => {
+    const { data, error } = await supabase
+      .from('pictures')
+      .select('*')
+      .eq('board_name', 'Doodles')
+      .order('timestamp', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching doodles:', error);
+      return;
+    }
+
+    setDoodles(data || []);
+  };
 
   const startDrawing = (e) => {
     setIsDrawing(true);
@@ -32,20 +52,20 @@ function Home() {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     ctx.beginPath();
     ctx.moveTo(x, y);
   };
 
   const draw = (e) => {
     if (!isDrawing) return;
-    
+
     const canvas = drawCanvasRef.current;
     const ctx = canvas.getContext('2d');
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     if (isEraser) {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.lineWidth = brushSize * 3;
@@ -54,7 +74,7 @@ function Home() {
       ctx.strokeStyle = currentColor;
       ctx.lineWidth = brushSize;
     }
-    
+
     ctx.lineTo(x, y);
     ctx.stroke();
   };
@@ -69,8 +89,64 @@ function Home() {
   const clearCanvas = () => {
     const canvas = drawCanvasRef.current;
     const ctx = canvas.getContext('2d');
+    ctx.globalCompositeOperation = 'source-over';
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+  };
+
+  const postDoodle = async () => {
+    const canvas = drawCanvasRef.current;
+    if (!canvas || isPostingDoodle) return;
+
+    try {
+      setIsPostingDoodle(true);
+
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) {
+        alert('Could not prepare doodle for upload.');
+        return;
+      }
+
+      const fileName = `doodle-${Date.now()}-${Math.random().toString(36).slice(2)}.png`;
+      const filePath = `shared/${fileName}`;
+      const file = new File([blob], fileName, { type: 'image/png' });
+
+      const { error: uploadError } = await supabase.storage
+        .from(DOODLES_BUCKET)
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Error uploading doodle:', uploadError);
+        alert('Could not upload doodle to Supabase Storage.');
+        return;
+      }
+
+      const { data: publicData } = supabase.storage
+        .from(DOODLES_BUCKET)
+        .getPublicUrl(filePath);
+
+      const { error: insertError } = await supabase.from('pictures').insert({
+        board_name: 'Doodles',
+        src: publicData.publicUrl,
+        caption: 'fresh doodle',
+        timestamp: new Date().toISOString(),
+        type: `doodle:${filePath}`
+      });
+
+      if (insertError) {
+        console.error('Error saving doodle record:', insertError);
+        alert('Could not save doodle entry.');
+        return;
+      }
+
+      clearCanvas();
+      fetchDoodles();
+    } finally {
+      setIsPostingDoodle(false);
+    }
   };
 
   const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#ffd700', '#4ecdc4', '#ff6b6b', '#000000'];
@@ -78,12 +154,8 @@ function Home() {
   return (
     <div className="home-page">
       <FloatingDoodles />
-      {/* PNG Doodles */}
-      {/*<img src="/Pin.png" alt="pin" className="png-doodle png-pin" 
-      <img src="/tattooo.png" alt="tattoo" className="png-doodle png-tattoo" />*/}
-      
+
       <div className="home-content">
-        {/* Top Section */}
         <div className="top-section">
           <img src="/Headphones.png" alt="Headphones" className="illustration illustration-headphones" />
           <div className="intro-box">
@@ -96,12 +168,21 @@ function Home() {
           </div>
         </div>
 
-        {/* Drawing Canvas Section */}
+        <section className="quote-section">
+          <div className="quote-card">
+            <p className="quote-kicker">quote of the cohort</p>
+            <blockquote className="featured-quote">
+              “Focus on the outcome, not the output”
+            </blockquote>
+            <p className="quote-credit">— literally everyone at IBM</p>
+          </div>
+        </section>
+
         <div className="drawing-section">
           <img src="/Drawsmile.png" alt="Draw smile" className="illustration illustration-pen" />
           <h2 className="canvas-title">✏️ doodle your thoughts here</h2>
           <p className="canvas-subtitle">because sometimes words aren't enough</p>
-          
+
           <div className="canvas-container">
             <canvas
               ref={drawCanvasRef}
@@ -153,11 +234,42 @@ function Home() {
               <button className="tool-btn clear-btn" onClick={clearCanvas}>
                 🗑️ clear all
               </button>
+              <button className="tool-btn post-btn" onClick={postDoodle} disabled={isPostingDoodle}>
+                {isPostingDoodle ? 'posting...' : '📌 post doodle'}
+              </button>
             </div>
+          </div>
+
+          <div className="doodle-folder-section">
+            <div className="doodle-folder-header">
+              <div>
+                <p className="quote-kicker">shared doodle folder</p>
+                <h3 className="doodle-folder-title">what everyone scribbled</h3>
+              </div>
+              <span className="doodle-count">{doodles.length} posts</span>
+            </div>
+
+            {doodles.length === 0 ? (
+              <div className="doodle-empty-state">
+                <span className="doodle-empty-emoji">🎨</span>
+                <p>No doodles posted yet. Be the first one to drop a masterpiece.</p>
+              </div>
+            ) : (
+              <div className="doodle-gallery">
+                {doodles.map((doodle) => (
+                  <div key={doodle.id} className="doodle-card">
+                    <img src={doodle.src} alt={doodle.caption} className="doodle-image" />
+                    <div className="doodle-meta">
+                      <p>{doodle.caption}</p>
+                      <span>{new Date(doodle.timestamp).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Bottom Section */}
         <div className="bottom-section">
           <div className="info-cards">
             <div className="info-card">
