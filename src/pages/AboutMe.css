@@ -1,0 +1,24 @@
+.about-me-page {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 88px;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+}
+
+.about-me-image {
+  display: block;
+  width: 100%;
+  max-width: 1440px;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .about-me-page {
+    padding-top: 76px;
+  }
+}
+
+/* Made with Bob */

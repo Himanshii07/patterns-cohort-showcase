@@ -1,0 +1,145 @@
+.floating-doodles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.floating-doodle {
+  position: absolute;
+  opacity: 0.4;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.doodle-1 {
+  width: 60px;
+  height: 60px;
+  top: 10%;
+  left: 5%;
+  animation: float-rotate 8s;
+}
+
+.doodle-2 {
+  width: 80px;
+  height: 80px;
+  top: 20%;
+  right: 10%;
+  animation: float-wiggle 10s;
+}
+
+.doodle-3 {
+  width: 50px;
+  height: 50px;
+  top: 50%;
+  left: 8%;
+  animation: float-bounce 7s;
+}
+
+.doodle-4 {
+  width: 70px;
+  height: 70px;
+  top: 70%;
+  right: 15%;
+  animation: float-slide 9s;
+}
+
+.doodle-5 {
+  width: 55px;
+  height: 55px;
+  top: 35%;
+  right: 5%;
+  animation: float-pulse 6s;
+}
+
+.doodle-6 {
+  width: 45px;
+  height: 65px;
+  top: 80%;
+  left: 15%;
+  animation: float-rotate 11s;
+}
+
+.doodle-7 {
+  width: 60px;
+  height: 60px;
+  top: 15%;
+  left: 50%;
+  animation: float-wiggle 8s;
+}
+
+.doodle-8 {
+  width: 50px;
+  height: 50px;
+  top: 60%;
+  right: 25%;
+  animation: float-bounce 7s;
+}
+
+@keyframes float-rotate {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+  }
+}
+
+@keyframes float-wiggle {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(20px) translateY(-20px);
+  }
+  75% {
+    transform: translateX(-20px) translateY(20px);
+  }
+}
+
+@keyframes float-bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-40px) scale(1.1);
+  }
+}
+
+@keyframes float-slide {
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(-30px) rotate(-15deg);
+  }
+}
+
+@keyframes float-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 768px) {
+  .floating-doodle {
+    opacity: 0.2;
+  }
+  
+  .doodle-1, .doodle-2, .doodle-3, .doodle-4,
+  .doodle-5, .doodle-6, .doodle-7, .doodle-8 {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Made with Bob */

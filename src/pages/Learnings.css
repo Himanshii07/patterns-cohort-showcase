@@ -1,0 +1,554 @@
+.learnings-page {
+  position: relative;
+  min-height: 100vh;
+  background: #fff;
+  overflow-x: hidden;
+  padding-top: 2rem;
+}
+
+.doodles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6%;
+  height: 20%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.floating-doodle {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.3;
+  animation: float-around 20s infinite ease-in-out;
+}
+
+@keyframes float-around {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(50px, -50px) rotate(90deg);
+  }
+  50% {
+    transform: translate(-30px, 30px) rotate(180deg);
+  }
+  75% {
+    transform: translate(30px, 50px) rotate(270deg);
+  }
+}
+
+.learnings-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.learnings-header {
+  text-align: center;
+  padding: 5rem 0 3rem;
+}
+
+.learnings-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  font-family: 'Caveat', cursive;
+  color: #333;
+  text-shadow: 2px 2px 0 rgba(102, 126, 234, 0.2);
+  margin-bottom: 1rem;
+  animation: title-pop 0.5s ease-out;
+}
+
+@keyframes title-pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.learnings-subtitle {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: #667eea;
+  font-style: italic;
+  font-family: 'Patrick Hand', cursive;
+}
+
+.learnings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.learning-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.learning-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.learning-card:hover::before {
+  transform: scaleX(1);
+}
+
+.learning-card:hover {
+  transform: translateY(-10px) rotate(1deg);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.learning-card.active {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 107, 107, 0.2) 100%);
+  transform: scale(1.05);
+}
+
+.card-front {
+  text-align: center;
+}
+
+.card-emoji {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: bounce-in 0.5s ease-out;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.card-title {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'Caveat', cursive;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.keyword-tag {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.keyword-tag:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.click-hint {
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+  margin-top: 1rem;
+  opacity: 0.7;
+}
+
+.card-back {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px dashed rgba(0, 0, 0, 0.1);
+  animation: slide-down 0.3s ease-out;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-description {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.fun-fact {
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+  background: rgba(255, 215, 0, 0.2);
+  padding: 0.8rem;
+  border-radius: 10px;
+  border-left: 4px solid #ffd700;
+  text-align: left;
+}
+
+.key-takeaways {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 30px;
+  padding: 3rem;
+  margin: 4rem 0;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.key-takeaways h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: #333;
+  text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.takeaways-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.takeaway-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.takeaway-item:hover {
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateX(10px);
+}
+
+.takeaway-number {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #667eea;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.takeaway-item p {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.final-thoughts {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 30px;
+  padding: 3rem;
+  margin: 4rem 0;
+  text-align: center;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.final-thoughts h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: #333;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.final-thoughts p {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .learnings-content {
+    padding: 1rem;
+  }
+
+  .learnings-header {
+    padding: 2rem 0 1.5rem;
+  }
+
+  .learnings-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .key-takeaways,
+  .final-thoughts {
+    padding: 2rem 1.5rem;
+  }
+
+  .takeaways-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .takeaway-item {
+    padding: 1rem;
+  }
+}
+
+/* Made with Bob */
+
+/* Acronym Quiz Section */
+.acronym-section {
+  margin: 4rem 0;
+}
+
+.acronym-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  font-family: 'Caveat', cursive;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.acronym-subtitle {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: #667eea;
+  text-align: center;
+  font-style: italic;
+  font-family: 'Patrick Hand', cursive;
+  margin-bottom: 2rem;
+}
+
+.acronym-toggle {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.toggle-btn {
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: 'Patrick Hand', cursive;
+  border: 2px solid #667eea;
+  border-radius: 50px;
+  background: #fff;
+  color: #667eea;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.toggle-btn.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border-color: transparent;
+}
+
+.acronym-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.acronym-card {
+  position: relative;
+  height: 180px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.acronym-front,
+.acronym-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  transition: transform 0.6s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.acronym-front {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  z-index: 2;
+}
+
+.acronym-text {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: 'Caveat', cursive;
+  color: #667eea;
+  text-transform: uppercase;
+}
+
+.acronym-back {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  transform: rotateY(180deg);
+  text-align: center;
+}
+
+.acronym-card:hover .acronym-front {
+  transform: rotateY(180deg);
+}
+
+.acronym-card:hover .acronym-back {
+  transform: rotateY(0deg);
+}
+
+.acronym-full {
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: 'Patrick Hand', cursive;
+  margin-bottom: 0.5rem;
+  text-transform: capitalize;
+}
+
+.acronym-desc {
+  font-size: 0.95rem;
+  font-family: 'Patrick Hand', cursive;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+/* Good Vibes Illustration */
+.good-vibes-illustration {
+  position: absolute;
+  width: clamp(150px, 15vw, 250px);
+  top: 60px;
+  right: 5%;
+  z-index: 1;
+  animation: wiggle 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(-3deg) translateY(0);
+  }
+  25% {
+    transform: rotate(3deg) translateY(-10px);
+  }
+  50% {
+    transform: rotate(-2deg) translateY(-5px);
+  }
+  75% {
+    transform: rotate(2deg) translateY(-15px);
+  }
+}
+
+@media (max-width: 768px) {
+  .good-vibes-illustration {
+    width: 150px;
+    top: 10px;
+    right: 3%;
+  }
+
+  .acronym-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .acronym-card {
+    height: 150px;
+  }
+
+  .acronym-text {
+    font-size: 2rem;
+  }
+
+  .acronym-toggle {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .toggle-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* SVG Doodles for Learnings */
+.svg-doodle-learnings {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+  height: auto;
+}
+
+.svg-doodle-1 {
+  width: 60px;
+  max-width: 60px;
+  bottom: 10%;
+  left: 5%;
+  animation: float-around 10s ease-in-out infinite;
+}
+
+.svg-doodle-2 {
+  width: 50px;
+  max-width: 50px;
+  top: 30%;
+  left: 8%;
+  animation: float-around 12s ease-in-out infinite;
+  animation-delay: 2s;
+}
