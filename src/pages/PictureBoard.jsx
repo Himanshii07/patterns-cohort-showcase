@@ -17,6 +17,9 @@ function PictureBoard() {
   const [newBoardName, setNewBoardName] = useState('');
   const [editingCaption, setEditingCaption] = useState(null);
   const [captionDraft, setCaptionDraft] = useState('');
+  const [showUploadPreview, setShowUploadPreview] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadPreviewUrl, setUploadPreviewUrl] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -285,27 +288,48 @@ function PictureBoard() {
     }
   };
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = (e) => {
     const file = e.target.files[0];
 
     if (file && file.type.startsWith('image/')) {
-      const uploadResult = await uploadImageToStorage(file);
-
-      if (!uploadResult) return;
-
-      const success = await savePictureRecord(
-        uploadResult.publicUrl,
-        'upload',
-        'Untitled',
-        uploadResult.filePath
-      );
-
-      if (success) {
-        fetchPictures();
-      }
+      setUploadedFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setUploadPreviewUrl(previewUrl);
+      setShowUploadPreview(true);
+      setCaption('');
     }
 
     e.target.value = '';
+  };
+
+  const cancelUpload = () => {
+    if (uploadPreviewUrl) {
+      URL.revokeObjectURL(uploadPreviewUrl);
+    }
+    setShowUploadPreview(false);
+    setUploadedFile(null);
+    setUploadPreviewUrl(null);
+    setCaption('');
+  };
+
+  const saveUploadedPhoto = async () => {
+    if (!uploadedFile) return;
+
+    const uploadResult = await uploadImageToStorage(uploadedFile);
+
+    if (!uploadResult) return;
+
+    const success = await savePictureRecord(
+      uploadResult.publicUrl,
+      'upload',
+      caption.trim() || 'Untitled',
+      uploadResult.filePath
+    );
+
+    if (success) {
+      cancelUpload();
+      fetchPictures();
+    }
   };
 
   const updateCaption = async (pictureId, newCaption) => {
@@ -513,6 +537,38 @@ function PictureBoard() {
               )}
 
               <canvas ref={canvasRef} style={{ display: 'none' }} />
+            </div>
+          </div>
+        )}
+
+        {showUploadPreview && (
+          <div className="camera-modal">
+            <div className="camera-container">
+              <div className="camera-header">
+                <h3>
+                  Preview Your Upload <span className="header-icon" aria-hidden="true">🖼️</span>
+                </h3>
+                <button className="close-btn" onClick={cancelUpload}>
+                  ✕
+                </button>
+              </div>
+
+              <img src={uploadPreviewUrl} alt="Upload preview" className="captured-preview" />
+              <input
+                type="text"
+                placeholder="Add a caption..."
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                className="caption-input"
+              />
+              <div className="preview-actions">
+                <button className="retake-btn" onClick={cancelUpload}>
+                  ❌ Cancel
+                </button>
+                <button className="save-btn" onClick={saveUploadedPhoto}>
+                  ✅ Save
+                </button>
+              </div>
             </div>
           </div>
         )}
