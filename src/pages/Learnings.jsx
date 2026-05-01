@@ -126,7 +126,7 @@ function Learnings() {
 
   return (
     <div className="learnings-page">
-      {/* Floating Doodles 
+      {/* Floating Doodles */}
       <div className="doodles-container">
         {doodles.map((doodle) => (
           <div
@@ -142,10 +142,9 @@ function Learnings() {
             {doodle.emoji}
           </div>
         ))}
-      </div> */}
+      </div>
 
       <div className="learnings-content">
-        <img src="/Goodvibes.png" alt="Good Vibes Only" className="good-vibes-illustration" />
         <header className="learnings-header">
           <h1 className="learnings-title">What I Actually Learned </h1>
           <p className="learnings-subtitle">
